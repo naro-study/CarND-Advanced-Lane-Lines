@@ -87,30 +87,44 @@ class CameraCalibration:
 
         return dict
 
-    def undistortion_image(self):
+    def undistortion_image(self, image):
         dict = self.load_calibration_params()
         mtx = dict["mtx"]
         dist = dict["dist"]
 
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        undistort_img = cv2.undistort(img, mtx, dist, None, mtx)
+                         
+        return undistort_img
+            
+    def save_undistort_image(self):
         images = glob.glob('./camera_cal/calibration*.jpg')
         print("Number of images: {}".format(len(images)))
 
         for idx, name in enumerate(images):
-            img = cv2.imread(name)    
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-
-            undistort_img = cv2.undistort(img, mtx, dist, None, mtx)
+            image = cv2.imread(name)
+            undistort_img = self.undistortion_image(image=image)
 
             if self.is_visualize == True:
-                title = "undistortion image idx: {}".format(idx)
-                cv2.imshow(title, undistort_img)
-                cv2.waitKey(500)
-            
+                #title = "undistortion image idx: {}".format(idx)
+                #cv2.imshow(title, undistort_img)
+                #cv2.waitKey(500)
+                f, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))
+                ax1.imshow(image)
+                ax1.set_title('Original Image', fontsize=24)
+                ax2.imshow(undistort_img)
+                ax2.set_title('Undistorted Image', fontsize=24)
+                plt.show(block=True)
+
             if self.is_save == True:
                 cv2.imwrite('./output_images/undistortion_image{}.jpg'.format(idx), undistort_img)
+                #save_file_name = "undistorted_{}".format(os.path.basename(image_file.replace(".jpg", ".png")))
+                #save_location = "./output_images/{}".format(save_file_name)
+                #f.savefig(save_location, bbox_inches="tight")
         
         if self.is_visualize == True:
             cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     cc = CameraCalibration(
@@ -118,12 +132,12 @@ if __name__ == '__main__':
         image_column=1280,
         corners_row=6,
         corners_column=9,
-        is_visualize=False,
-        is_save=True
+        is_visualize=True,
+        is_save=False
     )
 
     #mtx, dist = cc.set_calibration_params()
     #cc.save_calibration_params(mtx, dist)
-    cc.undistortion_image()
+    cc.save_undistort_image()
 
         
