@@ -117,10 +117,10 @@ class CameraCalibration:
                 plt.show(block=True)
 
             if self.is_save == True:
-                cv2.imwrite('./output_images/undistortion_image{}.jpg'.format(idx), undistort_img)
-                #save_file_name = "undistorted_{}".format(os.path.basename(image_file.replace(".jpg", ".png")))
-                #save_location = "./output_images/{}".format(save_file_name)
-                #f.savefig(save_location, bbox_inches="tight")
+                #cv2.imwrite('./output_images/undistortion_image{}.jpg'.format(idx), undistort_img)
+                save_file_name = "undistorted_{}".format(os.path.basename(name.replace(".jpg", ".png")))
+                save_location = "./output_images/{}".format(save_file_name)
+                f.savefig(save_location, bbox_inches="tight")
         
         if self.is_visualize == True:
             cv2.destroyAllWindows()
@@ -133,7 +133,7 @@ if __name__ == '__main__':
         corners_row=6,
         corners_column=9,
         is_visualize=True,
-        is_save=False
+        is_save=True
     )
 
     #mtx, dist = cc.set_calibration_params()
